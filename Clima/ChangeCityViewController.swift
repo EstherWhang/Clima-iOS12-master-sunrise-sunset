@@ -28,15 +28,17 @@ class ChangeCityViewController: UIViewController {
     @IBOutlet weak var sunriseSunsetSwitchOutlet: UISwitch!
     
     
-    //https://stackoverflow.com/questions/28555255/how-do-i-keep-uiswitch-state-when-changing-viewcontrollers?noredirect=1&lq=1
+    //the override func idea is from https://stackoverflow.com/questions/28555255/how-do-i-keep-uiswitch-state-when-changing-viewcontrollers?noredirect=1&lq=1
     override func viewDidLoad() {
         super.viewDidLoad()
+        //makes sure that the switch stays what I made it (stays on, stays off)
         sunriseSunsetSwitchOutlet.isOn =  UserDefaults.standard.bool(forKey: "switchState")
     }
     
     @IBAction func sunriseSunsetSwitch(_ sender: UISwitch) {
+        //user default stuff from the previous link
         UserDefaults.standard.set(sender.isOn, forKey: "switchState")
-        
+        //hides or shows the sunset labels depending on the state of the sunset switch
         delegate?.userDecidedSunriseSunset(showOrNo: sunriseSunsetSwitchOutlet.isOn)
 
     }

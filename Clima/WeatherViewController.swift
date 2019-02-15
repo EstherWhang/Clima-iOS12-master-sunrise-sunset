@@ -36,7 +36,8 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, Change
     //CHALLENGE
     @IBOutlet weak var sunriseLabel: UILabel!
     @IBOutlet weak var sunsetLabel: UILabel!
-    var stateOfTheSun = true
+    
+
     
 
     //delegate and protocols!!!
@@ -50,8 +51,6 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, Change
         locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()
         
-        
-        //SunriseSunsetLabel view
         
     }
     
@@ -68,7 +67,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, Change
                 print("Success! Got the weather data")
                 let weatherJSON : JSON = JSON(response.result.value!)
                 self.updateWeatherData(json: weatherJSON)
-                //print(weatherJSON)
+                
             }
             else {
                 print("Error \(String(describing: response.result.error))")
@@ -98,7 +97,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, Change
             weatherDataModel.weatherIconName = weatherDataModel.updateWeatherIcon(condition: weatherDataModel.condition)
             
             
-            //TIMEZONE
+            //gets the timezone from the lat/long values of the city,
             let cityLat = json["coord"]["lat"].doubleValue
             let cityLong = json["coord"]["lon"].doubleValue
             // Get correct time zone from lat/long & put in WeatherDateModel
@@ -120,20 +119,19 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, Change
     }
 
    
-    func timeZoneConvertor(latitude: Double, longitude: Double) -> TimeZone! {
-        //https://stackoverflow.com/questions/9188871/how-to-identify-timezone-from-longitude-and-latitude-in-ios
-        //let location = CLLocation(latitude: weatherDataModel.cityLat, longitude: weatherDataModel.cityLat)
-        //let geoCoder = CLGeocoder()
     
+    //takes lat/long and returns the timezone for that coordinate
+    func timeZoneConvertor(latitude: Double, longitude: Double) -> TimeZone! {
+        //got this bit of code from https://stackoverflow.com/questions/9188871/how-to-identify-timezone-from-longitude-and-latitude-in-ios
         
         let location = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
         let timeZone = TimezoneMapper.latLngToTimezone(location)
-        print("iadsfasdfs:\(timeZone!)")
+        
         return timeZone
-
-
     }
 
+    //the sunrise/sunset times are only given in Unix, so this function converts it to human time (using the time zone found in timeZoneConvertor
+    //from https://stackoverflow.com/questions/26849237/swift-convert-unix-time-to-date-and-time
     func convertUnixtoHumanTime(timeResult: Double) -> String {
         let date = Date(timeIntervalSince1970: timeResult)
         let dateFormatter = DateFormatter()
@@ -145,8 +143,6 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, Change
         let timeOfLocation = dateFormatter.string(from: date)
         return timeOfLocation
      }
-     //https://stackoverflow.com/questions/26849237/swift-convert-unix-time-to-date-and-time
-    //https://stackoverflow.com/questions/47494222/getting-the-city-country-list-in-ios-time-zone
     
  
     
@@ -159,13 +155,12 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, Change
     //Write the updateUIWithWeatherData method here:
     
     func updateUIWithWeatherData() {
-        print("updateUI \(weatherDataModel.timeZone)")
+        
         cityLabel.text = weatherDataModel.city
         temperatureLabel.text = "\(weatherDataModel.temperature)°"
         weatherIcon.image = UIImage(named: weatherDataModel.weatherIconName)
         sunriseLabel.text = "Sunrise: \(weatherDataModel.sunrise)"
         sunsetLabel.text = "Sunset: \(weatherDataModel.sunset)"
-        print("Sunrise: \(weatherDataModel.sunrise) and Sunset: \(weatherDataModel.sunset)")
         
     }
     
@@ -184,7 +179,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, Change
             
             let latitude = String(location.coordinate.latitude)
             let longitude = String(location.coordinate.longitude)
-            //print("Latitutude: \(latitude) and Longitude: \(longitude)")
+            
             let params : [String : String] = ["lat" : latitude, "lon" : longitude, "appid" : APP_ID]
             
             getWeatherData(url: WEATHER_URL, parameters: params)
@@ -213,15 +208,9 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, Change
     
 
     func userDecidedSunriseSunset(showOrNo: Bool) {
-        if showOrNo {
-            //how to refresh
-            sunriseLabel.isHidden = false
-            sunsetLabel.isHidden = false
-        }
-        else {
-            sunriseLabel.isHidden = true
-            sunsetLabel.isHidden = true
-        }
+        //shows the sunrise/sunset times depending on whether the switch is on or not
+        sunriseLabel.isHidden = !showOrNo
+        sunsetLabel.isHidden = !showOrNo
     }
 
     
@@ -238,45 +227,3 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, Change
     
     
 }
-
-
-/*
- let thisTakesUpTooMuchTimeButDoYouHaveABetterIdea = TimeZone.knownTimeZoneIdentifiers
- for identifier in thisTakesUpTooMuchTimeButDoYouHaveABetterIdea {
- if identifier.split(separator: "/").last! == cityName {
- return TimeZone(identifier: identifier)!
- 
- }
- }
- 
- print("Oops you screwed up time zones") //THIS PRINTS WITH CITIES THAT AREN'T IN THAT FREAKING ARRAY
- return TimeZone.current
- 
- 
- //from the internet: https://stackoverflow.com/questions/30003280/swift-get-value-using-async-method
- func getPlaceFromCoordinate(location: CLLocation, completionHandler: @escaping (CLPlacemark?, NSError?) -> ()) {
- CLGeocoder().reverseGeocodeLocation(location) { placemarks, error in
- if error != nil {
- print("Reverse geocoding error: \(String(describing: error))")
- } else if placemarks?.count == 0 {
- print("no placemarks")
- }
- 
- completionHandler(placemarks?.first as? CLPlacemark, error as? NSError)
- }
- }
- */
-
-/*
- var tempTimeZone = TimeZone(identifier: "America/Chicago")
- geoCoder.reverseGeocodeLocation(location) { (placemarks, error) in
- if let placemark = placemarks?[0] {
- // Update timezone
- print("instead of this:\(placemark.timeZone)")
- tempTimeZone = placemark.timeZone
- }
- }
- print("iadsfasdfs:\(tempTimeZone!)")
- 
- return tempTimeZone
- */

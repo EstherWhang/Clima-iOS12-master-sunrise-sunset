@@ -1,0 +1,28 @@
+PODS:
+  - Alamofire (4.8.1)
+  - LatLongToTimezone (1.1.5)
+  - SVProgressHUD (2.2.5)
+  - SwiftyJSON (4.2.0)
+
+DEPENDENCIES:
+  - Alamofire
+  - LatLongToTimezone (~> 1.1)
+  - SVProgressHUD
+  - SwiftyJSON
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - Alamofire
+    - LatLongToTimezone
+    - SVProgressHUD
+    - SwiftyJSON
+
+SPEC CHECKSUMS:
+  Alamofire: 16ce2c353fb72865124ddae8a57c5942388f4f11
+  LatLongToTimezone: 8f3935752827dc11ec85c1e37360bb5e2939f176
+  SVProgressHUD: 1428aafac632c1f86f62aa4243ec12008d7a51d6
+  SwiftyJSON: c4bcba26dd9ec7a027fc8eade48e2c911f229e96
+
+PODFILE CHECKSUM: 9875d412aa4ea5aa2f741a8a8e16886a0faf82b5
+
+COCOAPODS: 1.5.3
